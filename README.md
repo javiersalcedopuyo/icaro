@@ -2,7 +2,7 @@
 
 ![Icaro's logo](logo.png)
 
-Minimal testing framework for C++, designed as a companion for the build system [Dedalo](https://github.com/javiersalcedopuyo/dedalo).
+Minimal testing framework for C++ >= 20, designed as a companion for the build system [Dedalo](https://github.com/javiersalcedopuyo/dedalo).
 
 ---
 
@@ -68,4 +68,12 @@ TEST RESULTS:
 ```
 
 ## Features
-- 
+- [x] Single header, no 3rd party dependencies.
+- [x] Detailed error logging displaying the expressions as they are in the code, and their values.
+- [x] Final report indicating:
+    - [x] Number of total tests run out of the total number of existing ones.
+    - [x] Number of succesful tests.
+    - [x] Number of failed tests and a list of their names.
+- [x] Name-based filtering of the tests to be run.
+- [ ] Organisation in test suites.
+- [ ] Integration with CI/CD pipelines.
