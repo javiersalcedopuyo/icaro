@@ -6,7 +6,6 @@
 
 #include <cstdio>
 #include <string>
-#include <vector> // TODO: Replace with my own
 #include <format>
 
 #define TEST( name, test ) Icaro::tests.emplace_back( #name, []()-> bool { test }  );
@@ -24,7 +23,56 @@ namespace Icaro
     using String = std::string;
 
     template< typename T >
-    using List = std::vector<T>;
+    class List
+    {
+    public:
+        List() = default;
+        ~List() { free( static_cast<void*>( _data ) ); }
+
+        [[ nodiscard ]]
+        constexpr auto size() const -> size_t { return _size; }
+
+        auto reserve( const size_t new_capacity ) -> bool
+        {
+            if( new_capacity <= _capacity and _capacity > 0 )
+                return true;
+
+            _data = static_cast<T*>( _data == nullptr
+                ?  malloc( new_capacity * sizeof( T ) )
+                : realloc( static_cast<void*>( _data ), new_capacity * sizeof( T ) ) );
+
+            _capacity = new_capacity;
+
+            return _data != nullptr;
+        }
+
+        template< typename ...Args >
+        auto emplace_back( Args&&... args ) -> bool
+        {
+            if( _size >= _capacity )
+            {
+                if( not reserve( _capacity == 0 ? 1 : _capacity * 2 ) )
+                {
+                    return false;
+                }
+            }
+
+            new ( static_cast<void*>( _data + _size ) ) T{ std::forward<Args>( args )... };
+            _size += 1;
+
+            return true;
+        }
+
+        [[ nodiscard ]] constexpr auto begin()       ->       T* { return _data;         }
+        [[ nodiscard ]] constexpr auto begin() const -> const T* { return _data;         }
+        [[ nodiscard ]] constexpr auto end()         ->       T* { return _data + _size; }
+        [[ nodiscard ]] constexpr auto end()   const -> const T* { return _data + _size; }
+
+    private:
+        T*     _data     = nullptr;
+        size_t _size     = 0;
+        size_t _capacity = 0;
+    };
 
     template< typename... Args >
     static void println( std::format_string< Args... > fmt, Args&&... args )
@@ -38,6 +86,7 @@ namespace Icaro
         Test( const char* _name, bool (*lambda)() ): name( _name ), test_fun( lambda ) {}
 
         // TODO: Print how long it took
+        [[ nodiscard ]]
         auto run() const -> bool
         {
             println( "🧪 {}:", name );
