@@ -26,8 +26,11 @@ namespace Icaro
     template< typename T >
     using List = std::vector<T>;
 
-    using std::format;
-    static void println( const String& str ) { printf( "%s\n", str.c_str() ); }
+    template< typename... Args >
+    static void println( std::format_string< Args... > fmt, Args&&... args )
+    {
+        printf( "%s\n", std::format( fmt, std::forward< Args >( args )... ).c_str() );
+    }
 
     struct Test
     {
@@ -37,7 +40,7 @@ namespace Icaro
         // TODO: Print how long it took
         auto operator()() const -> bool
         {
-            println( format( "🧪 {}:", name ) );
+            println( "🧪 {}:", name );
             if( test_fun == nullptr )
             {
                 println( "❌ FAILED: No test with this name!" );
@@ -94,14 +97,14 @@ namespace Icaro
         println( "🏁 TEST RESULTS:" );
         if( not args.filter.empty() )
         {
-            println( format( "\tℹ️ Tests ran with filter: '{}'.", args.filter ) );
+            println( "\tℹ️ Tests ran with filter: '{}'.", args.filter );
         }
-        println( format( "\t📋 {}/{} tests run.", passed + failed.size(), tests.size() ) );
-        println( format( "\t✅ {} tests passed.", passed ) );
-        println( format( "\t❌ {} tests failed.", failed.size() ) );
+        println( "\t📋 {}/{} tests run.", passed + failed.size(), tests.size() );
+        println( "\t✅ {} tests passed.", passed );
+        println( "\t❌ {} tests failed.", failed.size() );
 
         for( const auto& name: failed )
-            println( format( "\t\t- {}", name ) );
+            println( "\t\t- {}", name );
     }
 
 
@@ -110,7 +113,7 @@ namespace Icaro
     {
         if( condition == false )
         {
-            println( format( "❌ FAILED: Expected '{}' to be true.", text ) );
+            println( "❌ FAILED: Expected '{}' to be true.", text );
             return false;
         }
         return true;
@@ -122,8 +125,8 @@ namespace Icaro
     {
         if( a == b ) return true;
 
-        println( format( "❌ FAILED: Expected '{} == {}'", a_text, b_text ) );
-        println( format( "           Found: {}, and {}", a, b ) );
+        println( "❌ FAILED: Expected '{} == {}'", a_text, b_text );
+        println( "           Found: {}, and {}", a, b );
         return false;
     }
 
@@ -133,8 +136,8 @@ namespace Icaro
     {
         if( a != b ) return true;
 
-        println( format( "❌ FAILED: Expected '{} != {}'", a_text, b_text ) );
-        println( format( "           Found: {}, and {}", a, b ) );
+        println( "❌ FAILED: Expected '{} != {}'", a_text, b_text );
+        println( "           Found: {}, and {}", a, b );
         return false;
     }
 }
