@@ -38,7 +38,7 @@ namespace Icaro
         Test( const char* _name, bool (*lambda)() ): name( _name ), test_fun( lambda ) {}
 
         // TODO: Print how long it took
-        auto operator()() const -> bool
+        auto run() const -> bool
         {
             println( "🧪 {}:", name );
             if( test_fun == nullptr )
@@ -82,7 +82,7 @@ namespace Icaro
             {
                 if( args.setup ) args.setup();
 
-                if( test() )
+                if( test.run() )
                     ++passed;
                 else
                     failed.emplace_back( test.name );
