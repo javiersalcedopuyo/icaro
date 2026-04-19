@@ -34,6 +34,7 @@ namespace Icaro
         Test() = delete;
         Test( const char* _name, bool (*lambda)() ): name( _name ), test_fun( lambda ) {}
 
+        // TODO: Print how long it took
         auto operator()() const -> bool
         {
             println( format( "🧪 {}:", name ) );
@@ -89,14 +90,15 @@ namespace Icaro
             }
         }
 
-        printf(
-            "TEST RESULTS:\n"
-            "\t📋 %zu/%zu tests run.\n"
-            "\t✅ %d tests passed.\n"
-            "\t❌ %zu tests failed:\n",
-            passed + failed.size(), tests.size(),
-            passed,
-            failed.size() );
+        // TODO: Print how long it took
+        println( "🏁 TEST RESULTS:" );
+        if( not args.filter.empty() )
+        {
+            println( format( "\tℹ️ Tests ran with filter: '{}'.", args.filter ) );
+        }
+        println( format( "\t📋 {}/{} tests run.", passed + failed.size(), tests.size() ) );
+        println( format( "\t✅ {} tests passed.", passed ) );
+        println( format( "\t❌ {} tests failed.", failed.size() ) );
 
         for( const auto& name: failed )
             println( format( "\t\t- {}", name ) );
