@@ -1,9 +1,12 @@
 EXECUTABLE_NAME=icaro_test
 
 CC = clang++
+DEBUGGER = lldb
+
 CFLAGS = -std=c++20\
+		 -g\
 		 -Werror -Wall -pedantic\
-		 -DENABLE_LOGS\
+		 -DDEBUG\
 		 -fno-exceptions\
 		 -fno-rtti\
 		 -fsanitize=undefined,address\
@@ -41,3 +44,9 @@ install:
 
 uninstall:
 	rm /usr/local/include/icaro.hpp
+
+debug:
+	$(MAKE) build
+	$(DEBUGGER) $(EXECUTABLE_NAME)
+
+.PHONY: test tidy clean install uninstall debug
