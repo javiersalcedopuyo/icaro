@@ -5,7 +5,6 @@
 #endif
 
 #include <cstdio>
-#include <string>
 #include <format>
 
 #define TEST( name, test ) Icaro::tests.emplace_back( #name, []()-> bool { test }  );
@@ -20,7 +19,13 @@
 
 namespace Icaro
 {
-    using String = std::string;
+    using String = const char*;
+
+    [[ nodiscard ]]
+    static constexpr auto strempty( const char* str ) -> bool
+    {
+        return str == nullptr or str[0] == '\0';
+    }
 
     template< typename T >
     class List
@@ -126,8 +131,8 @@ namespace Icaro
 
         for( const auto& test: tests )
         {
-            if( args.filter.empty()
-                or test.name.find( args.filter ) != String::npos )
+            if( strempty( args.filter )
+                or strcasestr( test.name, args.filter ) )
             {
                 if( args.setup ) args.setup();
 
@@ -144,7 +149,7 @@ namespace Icaro
 
         // TODO: Print how long it took
         println( "🏁 TEST RESULTS:" );
-        if( not args.filter.empty() )
+        if( not strempty( args.filter ) )
         {
             println( "\tℹ️ Tests ran with filter: '{}'.", args.filter );
         }
